@@ -1,6 +1,6 @@
 package auth.integrationauth.repository.user;
 
-import auth.integrationauth.domain.User;
+import auth.integrationauth.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -9,21 +9,21 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepository {
+public class MemberRepository {
 
     private final EntityManager em;
 
-    public void save(User user) {
+    public void save(Member user) {
         em.persist(user);
     }
 
-    public User findById(Long id) {
-        return em.find(User.class, id);
+    public Member findById(Long id) {
+        return em.find(Member.class, id);
     }
 
-    public Optional<User> findByLoginId(String loginId) {
-        return em.createQuery("select u from User u where u.loginId = :loginId", User.class)
-                .setParameter(loginId, loginId)
+    public Optional<Member> findByLoginId(String loginId) {
+        return em.createQuery("select m from Member m where m.loginId = :loginId", Member.class)
+                .setParameter("loginId", loginId)
                 .getResultList()
                 .stream()
                 .findFirst();

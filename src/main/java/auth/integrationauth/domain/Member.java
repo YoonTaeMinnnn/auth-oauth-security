@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class User {
+public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -24,8 +24,9 @@ public class User {
     private Authority authority;
 
     @Builder
-    public User(String loginId, String password) {
+    public Member(String loginId, String password, Authority authority) {
         this.loginId = loginId;
         this.password = password;
+        this.authority = authority;
     }
 }
