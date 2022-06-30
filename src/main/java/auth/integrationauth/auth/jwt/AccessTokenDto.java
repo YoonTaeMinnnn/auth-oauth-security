@@ -1,16 +1,12 @@
 package auth.integrationauth.auth.jwt;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @Builder
-public class TokenDto {
+public class AccessTokenDto {
 
     private String accessToken;
-
-    private String refreshToken;
-
 }
