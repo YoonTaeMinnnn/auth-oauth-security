@@ -1,5 +1,7 @@
 package auth.integrationauth.service;
 
+import auth.integrationauth.auth.config.SecurityUtil;
+import auth.integrationauth.auth.jwt.AccessTokenDto;
 import auth.integrationauth.auth.jwt.TokenDto;
 import auth.integrationauth.auth.jwt.TokenProvider;
 import auth.integrationauth.auth.jwt.redis.RedisService;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.Duration;
 
 @Service
@@ -23,18 +26,18 @@ import java.time.Duration;
 public class AuthService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final MemberRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
 
     @Transactional
     public void signUp(SignUpDto signUpDto) {
-        if(userRepository.findByLoginId(signUpDto.getLoginId()).isPresent()){
+        if(memberRepository.findByLoginId(signUpDto.getLoginId()).isPresent()){
             throw new IllegalStateException("중복된 회원입니다");
         }
 
-        userRepository.save(Member.builder()
+        memberRepository.save(Member.builder()
                 .loginId(signUpDto.getLoginId())
                 .password(passwordEncoder.encode(signUpDto.getPassword()))
                 .authority(Authority.ROLE_USER)
@@ -52,6 +55,16 @@ public class AuthService {
         redisService.setValues(authentication.getName()
                 , tokenDto.getRefreshToken()
                 , Duration.ofMillis(tokenProvider.getRefreshTokenExpireTime()));
+
+        return tokenDto;
+    }
+
+
+    public TokenDto refresh(String refreshToken) {
+
+        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
         return tokenDto;
     }

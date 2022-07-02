@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,15 +13,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice()
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionResponse userNameNotFoundException(UsernameNotFoundException e) {
-        return new ExceptionResponse(e.getMessage());
-    }
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ExceptionResponse userNameNotFoundException(UsernameNotFoundException e) {
+//        return new ExceptionResponse(e.getMessage());
+//    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionResponse badCredentialsException(BadCredentialsException e) {
         return new ExceptionResponse("로그인 정보가 일치하지 않습니다");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse runTimeException(RuntimeException e) {
+        return new ExceptionResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse missingRequestCookieException(MissingRequestCookieException e) {
+        return new ExceptionResponse("로그인 부터 하고 와라^^");
     }
 }
