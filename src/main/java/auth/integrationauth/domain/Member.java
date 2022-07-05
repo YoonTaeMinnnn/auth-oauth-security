@@ -21,8 +21,16 @@ public class Member extends BaseEntity{
 
     private String password;
 
+    private String nickName;
+
+    private String email;
+
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+
 
     @Builder
     public Member(String loginId, String password, Authority authority) {

@@ -3,9 +3,11 @@ package auth.integrationauth.controller;
 import auth.integrationauth.auth.config.SecurityUtil;
 import auth.integrationauth.auth.jwt.AccessTokenDto;
 import auth.integrationauth.auth.jwt.TokenDto;
+import auth.integrationauth.controller.dto.oauth.kakao.OauthToken;
 import auth.integrationauth.controller.dto.user.SignInDto;
 import auth.integrationauth.controller.dto.user.SignUpDto;
 import auth.integrationauth.service.AuthService;
+import auth.integrationauth.service.OauthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthController {
 
     private final AuthService authService;
+    private final OauthService oauthService;
 
     @PostMapping("/sign-up")
     public void signUp(@RequestBody SignUpDto signUpDto) {
@@ -50,6 +53,17 @@ public class AuthController {
         return ResponseEntity.ok(new AccessTokenDto(tokenDto.getAccessToken()));
     }
 
+    //-------------------------------------------------------------------
+    @GetMapping("/oauth/token")  // <--redirect url
+    public void kakaoSignUp(@RequestParam String code) {
+        log.info("인가코드 = {}", code);
+
+        OauthToken oauthToken = oauthService.getAccessToken(code);
+        oauthService.signIn(oauthToken.getAccess_token());
+
+
+    }
+    //----------------------------------------------------------------
 
 
     @PostMapping("/refresh")

@@ -5,6 +5,7 @@ import auth.integrationauth.auth.jwt.AccessTokenDto;
 import auth.integrationauth.auth.jwt.TokenDto;
 import auth.integrationauth.auth.jwt.TokenProvider;
 import auth.integrationauth.auth.jwt.redis.RedisService;
+import auth.integrationauth.controller.dto.oauth.kakao.OauthToken;
 import auth.integrationauth.controller.dto.user.SignInDto;
 import auth.integrationauth.controller.dto.user.SignUpDto;
 import auth.integrationauth.domain.Authority;
@@ -68,7 +69,6 @@ public class AuthService {
 
         return tokenDto;
     }
-
 
 
 }
