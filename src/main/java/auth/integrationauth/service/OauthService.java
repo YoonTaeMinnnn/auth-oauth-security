@@ -1,10 +1,13 @@
 package auth.integrationauth.service;
 
 
+import antlr.Token;
 import auth.integrationauth.auth.jwt.TokenDto;
+import auth.integrationauth.auth.jwt.TokenProvider;
 import auth.integrationauth.controller.dto.oauth.kakao.KakaoProfile;
 import auth.integrationauth.controller.dto.oauth.kakao.OauthToken;
 import auth.integrationauth.domain.Member;
+import auth.integrationauth.domain.OauthType;
 import auth.integrationauth.repository.user.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,10 +18,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 
 @Slf4j
@@ -27,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 public class OauthService {
 
     private final MemberRepository memberRepository;
+    private final TokenProvider tokenProvider;
 
     @Value("${kakao.clientId}")
     String client_id;
@@ -73,8 +81,35 @@ public class OauthService {
 
     }
 
-    public void signIn(String token) {
+    /**
+     * (1) member(loginId) : kakao id , member(email) : kakao email save
+     * (2) authentication ==> (kakao id , kakao email)
+     * @param token
+     * @return
+     */
+    @Transactional
+    public TokenDto signIn(String token) {
         KakaoProfile kakaoProfile = findProfile(token);
+
+        Optional<Member> findMember = memberRepository.findByKakaoEmail(kakaoProfile.getKakao_account().getEmail());
+
+        if (findMember.isEmpty()) {
+            memberRepository.save(Member.builder()
+                    .loginId(String.valueOf(kakaoProfile.getId()))
+                    .email(kakaoProfile.getKakao_account().getEmail())
+                    .nickName(kakaoProfile.getKakao_account().getProfile().getNickname())
+                    .imageUrl(kakaoProfile.getKakao_account().getProfile().getProfile_image_url())
+                    .oauthType(OauthType.KAKAO)
+                    .build());
+        }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                String.valueOf(kakaoProfile.getId()), kakaoProfile.getKakao_account().getEmail()
+        );
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        return tokenDto;
+
     }
 
     public KakaoProfile findProfile(String token) {

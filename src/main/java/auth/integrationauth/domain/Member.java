@@ -14,10 +14,10 @@ public class Member extends BaseEntity{
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
-    private String loginId;
+    private String loginId;  //일반 : loginId , 카카오 : kakao id(code)
 
     private String password;
 
@@ -28,14 +28,21 @@ public class Member extends BaseEntity{
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
+    private OauthType oauthType;
+
+    @Enumerated(EnumType.STRING)
     private Authority authority;
 
 
 
     @Builder
-    public Member(String loginId, String password, Authority authority) {
+    public Member(String loginId, String password, Authority authority, String nickName, String email, String imageUrl, OauthType oauthType) {
         this.loginId = loginId;
         this.password = password;
         this.authority = authority;
+        this.nickName = nickName;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.oauthType = oauthType;
     }
 }

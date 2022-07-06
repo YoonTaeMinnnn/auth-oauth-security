@@ -1,6 +1,7 @@
 package auth.integrationauth.repository.user;
 
 import auth.integrationauth.domain.Member;
+import auth.integrationauth.domain.OauthType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +15,8 @@ public class MemberRepository {
 
     private final EntityManager em;
 
-    public void save(Member user) {
-        em.persist(user);
+    public void save(Member member) {
+        em.persist(member);
     }
 
     public Member findById(Long id) {
@@ -25,6 +26,15 @@ public class MemberRepository {
     public Optional<Member> findByLoginId(String loginId) {
         return em.createQuery("select m from Member m where m.loginId = :loginId", Member.class)
                 .setParameter("loginId", loginId)
+                .getResultList()
+                .stream()
+                .findFirst();
+    }
+
+    public Optional<Member> findByKakaoEmail(String email) {
+        return em.createQuery("select m from Member m where m.oauthType = :oauthType and m.email = :email", Member.class)
+                .setParameter("oauthType", OauthType.KAKAO)
+                .setParameter("email", email)
                 .getResultList()
                 .stream()
                 .findFirst();

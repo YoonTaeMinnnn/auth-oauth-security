@@ -55,13 +55,16 @@ public class AuthController {
 
     //-------------------------------------------------------------------
     @GetMapping("/oauth/token")  // <--redirect url
-    public void kakaoSignUp(@RequestParam String code) {
+    public ResponseEntity kakaoSignUp(@RequestParam String code, HttpServletResponse response) {
         log.info("인가코드 = {}", code);
 
         OauthToken oauthToken = oauthService.getAccessToken(code);
-        oauthService.signIn(oauthToken.getAccess_token());
 
+        TokenDto tokenDto = oauthService.signIn(oauthToken.getAccess_token());
 
+        response.setHeader("Set-Cookie", setRefreshToken(tokenDto.getRefreshToken()).toString());
+
+        return ResponseEntity.ok(new AccessTokenDto(tokenDto.getAccessToken()));
     }
     //----------------------------------------------------------------
 
