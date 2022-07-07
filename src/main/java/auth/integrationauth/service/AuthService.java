@@ -10,6 +10,7 @@ import auth.integrationauth.controller.dto.user.SignInDto;
 import auth.integrationauth.controller.dto.user.SignUpDto;
 import auth.integrationauth.domain.Authority;
 import auth.integrationauth.domain.Member;
+import auth.integrationauth.domain.OauthType;
 import auth.integrationauth.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +42,10 @@ public class AuthService {
         memberRepository.save(Member.builder()
                 .loginId(signUpDto.getLoginId())
                 .password(passwordEncoder.encode(signUpDto.getPassword()))
+                .nickName(signUpDto.getNickName())
+                .email(signUpDto.getEmail())
                 .authority(Authority.ROLE_USER)
+                .oauthType(OauthType.NORMAL)
                 .build());
     }
 

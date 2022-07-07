@@ -33,10 +33,12 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    private String accessToken;
+
 
 
     @Builder
-    public Member(String loginId, String password, Authority authority, String nickName, String email, String imageUrl, OauthType oauthType) {
+    public Member(String loginId, String password, Authority authority, String nickName, String email, String imageUrl, OauthType oauthType,String accessToken) {
         this.loginId = loginId;
         this.password = password;
         this.authority = authority;
@@ -44,5 +46,10 @@ public class Member extends BaseEntity{
         this.email = email;
         this.imageUrl = imageUrl;
         this.oauthType = oauthType;
+        this.accessToken = accessToken;
+    }
+
+    public void updateAccessToken() {
+        this.accessToken = null;
     }
 }
