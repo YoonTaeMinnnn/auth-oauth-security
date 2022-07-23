@@ -97,7 +97,9 @@ public class OauthService {
     public TokenDto signIn(String token) {
         KakaoProfile kakaoProfile = findProfile(token);
 
+
         Optional<Member> findMember = memberRepository.findByLoginId(String.valueOf(kakaoProfile.getId()));
+
 
         if (findMember.isEmpty()) {
             memberRepository.save(Member.builder()

@@ -36,7 +36,7 @@ public class AuthService {
     @Transactional
     public void signUp(SignUpDto signUpDto) {
         if(memberRepository.findByLoginId(signUpDto.getLoginId()).isPresent()){
-            throw new IllegalStateException("중복된 회원입니다");
+            throw new IllegalStateException("중복된 아이디입니다.");
         }
 
         memberRepository.save(Member.builder()

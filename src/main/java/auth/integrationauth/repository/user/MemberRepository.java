@@ -40,6 +40,14 @@ public class MemberRepository {
                 .findFirst();
     }
 
+    public Optional<Member> findByLoginIdForKakao(String loginId) {
+        return em.createQuery("select m from Member m where m.oauthType = :normal", Member.class)
+                .setParameter("normal", OauthType.NORMAL)
+                .getResultList()
+                .stream()
+                .findFirst();
+    }
+
 
 
 
